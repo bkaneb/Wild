@@ -31,7 +31,7 @@ exports.validate = (data, forCreation = true) => {
     lastname: Joi.string().max(255).presence(presence),
     city: Joi.string().max(255).presence(presence),
     language: Joi.string().max(255).presence(presence),
-    hashedPassword: Joi.string().max(255).presence(presence),
+    password: Joi.string().min(8).max(255).presence(presence),
   }).validate(data, { abortEarly: false }).error;
 };
 
@@ -64,7 +64,8 @@ exports.create = async ({
   password,
 }) => {
   //permettra d'haser le mdp
-  return hashPassword(password).then(async (hashedPassword) => {
+  if(password.length >= 8){
+    return hashPassword(password).then(async (hashedPassword) => {
     const [result] = await connection
       .promise()
       .query(
@@ -74,6 +75,8 @@ exports.create = async ({
     const id = result.insertId;
     return { id, firstname, lastname, email, city, language, hashedPassword };
   });
+  }
+
 };
 
 exports.verifmail = async ({ filters: { email, usersID } }) => {

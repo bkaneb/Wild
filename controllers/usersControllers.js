@@ -33,13 +33,14 @@ exports.insertion = async (req, res) => {
         return Promise.reject("DUPLICATE_EMAIL");
       }
       error = UsersModel.validate(req.body);
+      if(error) return Promise.reject("INVALID_DATA");
       await UsersModel.create(req.body).then((createMovies) => {
         res.status(201).send(createMovies);
       });
     });
   } catch (err) {
     console.log(err);
-    if (err === "INVALID_DATA") res.status(422).json({ validationErrors });
+    if (err === "INVALID_DATA") res.status(422).send(error.details[0].message);
     else if (err === "DUPLICATE_EMAIL")
       res.status(409).json({ message: "This email is already used" });
     else res.status(500).send("Error saving the movie");
@@ -66,6 +67,7 @@ exports.update = async (req, res, next) => {
           return Promise.reject("DUPLICATE_EMAIL");
         }
         error = UsersModel.validate();
+        if(error) return Promise.reject("INVALID_DATA");
         return await UsersModel.update(req.params.id, req.body);
       })
       .then(() => {
@@ -74,7 +76,8 @@ exports.update = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    if (err === "DUPLICATE_EMAIL")
+    if (err === "INVALID_DATA") res.status(422).send(error.details[0].message);
+    else  if (err === "DUPLICATE_EMAIL")
       res.status(409).json({ message: "This email is already used" });
     else if (err === "RECORD_NOT_FOUND")
       res.status(404).send(`Movie with id ${req.params.id} not found.`);
