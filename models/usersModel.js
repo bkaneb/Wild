@@ -1,5 +1,27 @@
 const { connection } = require("../config/db-config");
 const Joi = require("joi");
+const argon2 = require("argon2");
+
+// configuration hachage
+
+const hashingOptions = {
+  type: argon2.argon2id,
+  memoryCost: 2 ** 16,
+  timeCost: 5,
+  parallelism: 1,
+};
+
+// renvoie le mdp haché
+
+const hashPassword = (plainPassword) => {
+  return argon2.hash(plainPassword, hashingOptions);
+};
+
+// renvoie la reponse (true/false) du mdp haché comparé au mdp réel
+
+exports.verifyPassword = (plainPassword, hashedPassword) => {
+  return argon2.verify(hashedPassword, plainPassword, hashingOptions);
+};
 
 exports.validate = (data, forCreation = true) => {
   const presence = forCreation ? "required" : "optional";
@@ -9,6 +31,7 @@ exports.validate = (data, forCreation = true) => {
     lastname: Joi.string().max(255).presence(presence),
     city: Joi.string().max(255).presence(presence),
     language: Joi.string().max(255).presence(presence),
+    hashedPassword: Joi.string().max(255).presence(presence),
   }).validate(data, { abortEarly: false }).error;
 };
 
@@ -32,29 +55,41 @@ exports.finOne = ({ filters: { usersID } }) => {
     .query("SELECT * FROM users WHERE id = ?", [usersID]);
 };
 
-exports.create = async ({ firstname, lastname, email, city, language }) => {
-  const [result] = await connection
-    .promise()
-    .query(
-      "INSERT INTO users (firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
-      [firstname, lastname, email, city, language]
-    );
-  const id = result.insertId;
-  return { id, firstname, lastname, email, city, language };
+exports.create = async ({
+  firstname,
+  lastname,
+  email,
+  city,
+  language,
+  password,
+}) => {
+  //permettra d'haser le mdp
+  return hashPassword(password).then(async (hashedPassword) => {
+    const [result] = await connection
+      .promise()
+      .query(
+        "INSERT INTO users (firstname, lastname, email, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)",
+        [firstname, lastname, email, city, language, hashedPassword]
+      );
+    const id = result.insertId;
+    return { id, firstname, lastname, email, city, language, hashedPassword };
+  });
 };
 
-exports.verifmail = ({ filters: { email, usersID } }) => {
-  if (usersID != null) {
-    return connection
+exports.verifmail = async ({ filters: { email, usersID } }) => {
+  if (!usersID) {
+    const [results] = await connection
       .promise()
       .query("SELECT * FROM users WHERE email = ?", [email]);
+    return results[0];
   } else {
-    return connection
+    const [results_1] = await connection
       .promise()
       .query("SELECT * FROM users WHERE email = ? AND id <> ?", [
         email,
         usersID,
       ]);
+    return results_1[0];
   }
 };
 

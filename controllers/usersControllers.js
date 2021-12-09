@@ -1,12 +1,10 @@
-const Joi = require("joi");
-const { connection } = require("../config/db-config");
 const UsersModel = require("../models/usersModel");
 
 exports.selectAll = async (req, res) => {
   const language = req.query.language;
   try {
     const [results] = await UsersModel.findMany({ filters: { language } });
-    res.status(200).json(results);
+    res.status(200).send(results);
   } catch (err) {
     res.status(500).send("Error retrieving data from database");
   }
@@ -30,22 +28,21 @@ exports.insertion = async (req, res) => {
   let error = null;
   const { email } = req.body;
   try {
-    const results = await UsersModel.verifmail(email);
-    if (results[0]) {
-      return Promise.reject("DUPLICATE_EMAIL");
-    }
-    error = UsersModel.validate(req.body);
-    try {
+    await UsersModel.verifmail({ filters: { email } }).then(async (user) => {
+      if (user) {
+        return Promise.reject("DUPLICATE_EMAIL");
+      }
+      error = UsersModel.validate(req.body);
       await UsersModel.create(req.body).then((createMovies) => {
         res.status(201).send(createMovies);
       });
-    } catch (err) {
-      res.status(500).send("Error saving the movie");
-    }
+    });
   } catch (err) {
+    console.log(err);
     if (err === "INVALID_DATA") res.status(422).json({ validationErrors });
     else if (err === "DUPLICATE_EMAIL")
       res.status(409).json({ message: "This email is already used" });
+    else res.status(500).send("Error saving the movie");
   }
 };
 
