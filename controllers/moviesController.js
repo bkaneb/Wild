@@ -1,13 +1,23 @@
 const MoviesModels = require("../models/moviesModel");
+const UsersModels = require("../models/usersModel");
 
 exports.selectAll = async (req, res) => {
+  const { user_token } = req.cookies;
   const color = req.query.color;
   const max_duration = req.query.max_duration;
   try {
-    const [result] = await MoviesModels.findMany({
-      filters: { color, max_duration },
-    });
-    res.status(200).json(result);
+    if (!user_token) {
+      const [result] = await MoviesModels.findMany({
+        filters: { color, max_duration },
+      });
+      res.status(200).json(result);
+    } else {
+      await UsersModels.findByToken(user_token).then(async (user) => {
+        await UsersModels.movies(user.id).then((movies) => {
+          res.send(movies);
+        })
+      })
+    }
   } catch (err) {
     console.log(err);
     res.status(500).send("Error retrieving data from database");
@@ -33,17 +43,25 @@ exports.selectOne = async (req, res) => {
 exports.insert = async (req, res) => {
   let error = null;
   try {
-    error = MoviesModels.validate(req.body);
-    try {
-      await MoviesModels.create(req.body).then((createMovies) => {
-        res.status(201).send(createMovies);
-      });
-    } catch (err) {
-      res.status(500).send("Error saving the movie");
-    }
+    await UsersModels.findByToken(req.cookies["user_token"]).then(
+      async (user) => {
+        error = MoviesModels.validate(req.body);
+        if (error) return Promise.reject("INVALID_DATA");
+        try {
+          await MoviesModels.create({ ...req.body, user_id: user.id }).then(
+            (createMovies) => {
+              res.status(201).send(createMovies);
+            }
+          );
+        } catch (err) {
+          res.status(500).send("Error create the movie");
+        }
+      }
+    );
   } catch (err) {
     console.log(err);
-    res.status(422).json({ validationErrors: error });
+    if (err === "INVALID_DATA") res.status(422).send(error.details[0].message);
+    else res.status(401).send("Unauthorized user");
   }
 };
 
@@ -76,10 +94,10 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const moviesID = req.params.id;
-  try{
-     await MoviesModels.destroy(moviesID);
-     res.status(201).send("Movie successfully delete");
-  } catch(err) {
+  try {
+    await MoviesModels.destroy(moviesID);
+    res.status(201).send("Movie successfully delete");
+  } catch (err) {
     console.log(err);
     res.status(500).send("Error delete the movie");
   }

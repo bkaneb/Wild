@@ -1,4 +1,5 @@
 const UsersModel = require("../models/usersModel");
+const { calculateToken } = require("../helpers/users");
 
 exports.selectAll = async (req, res) => {
   const language = req.query.language;
@@ -34,7 +35,7 @@ exports.insertion = async (req, res) => {
       }
       error = UsersModel.validate(req.body);
       if(error) return Promise.reject("INVALID_DATA");
-      await UsersModel.create(req.body).then((createMovies) => {
+      await UsersModel.create(req.body, calculateToken(email)).then((createMovies) => {
         res.status(201).send(createMovies);
       });
     });
@@ -63,12 +64,12 @@ exports.update = async (req, res, next) => {
         const otherUserWithEmail = await UsersModel.verifmail({
           filters: { email, usersID },
         });
-        if (otherUserWithEmail[0].length > 0) {
+        if (otherUserWithEmail) {
           return Promise.reject("DUPLICATE_EMAIL");
         }
         error = UsersModel.validate();
         if(error) return Promise.reject("INVALID_DATA");
-        return await UsersModel.update(req.params.id, req.body);
+        return await UsersModel.update(req.params.id, req.body, calculateToken(email));
       })
       .then(() => {
         res.status(200).json({ id: usersID, ...req.body });

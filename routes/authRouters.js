@@ -1,18 +1,26 @@
 const authRouter = require("express").Router();
+const { calculateToken } = require("../helpers/users");
 const UsersModel = require('../models/usersModel');
 
 authRouter.post('/api/auth/checkCredentials', async (req,res, next) => {
-    const { email, hashedPassword } = req.body;
+    const { email, password } = req.body;
     try{
+        // verification email si ok on continue
         await UsersModel.verifmail({filters: { email }}).then( async (user) => {
             if (!user) return Promise.reject("email_is_not_found");
             else{
+                // verification mot de passe
                 await UsersModel.verifyPassword(
-                    hashedPassword,
-                    user.hashedPassword,
+                    password, // mot de passe recu
+                    user.hashedPassword, // mot de passe du user qui correspond à l'email
                   ).then((passwordIsCorrect) => {
-                      console.log(passwordIsCorrect)
-                        if(passwordIsCorrect) res.send('Your credentials are valid !');
+                      // si true on envoie la clé privé (email -> hexa) dans un cookie
+                        if(passwordIsCorrect){
+                            const token = calculateToken(email);//(email -> hexa)
+                            UsersModel.update(user.id, { token: token });// update de la clé privée dans la bd
+                            res.cookie('user_token', token);// création cookie
+                            res.send();
+                        }
                         else return Promise.reject("password_is_not_found");
                   });
             }

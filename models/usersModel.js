@@ -55,28 +55,44 @@ exports.finOne = ({ filters: { usersID } }) => {
     .query("SELECT * FROM users WHERE id = ?", [usersID]);
 };
 
-exports.create = async ({
-  firstname,
-  lastname,
-  email,
-  city,
-  language,
-  password,
-}) => {
+exports.findByToken = (token) => {
+  return connection.promise()
+    .query('SELECT * FROM users WHERE token = ?', [token])
+    .then(([results]) => results[0]);
+};
+
+
+exports.movies = (user_id) => {
+  return connection.promise()
+    .query('SELECT * FROM movies WHERE user_id = ?', [user_id])
+    .then(([results]) => results);
+};
+
+exports.create = async (
+  { firstname, lastname, email, city, language, password },
+  token
+) => {
+  console.log(token);
   //permettra d'haser le mdp
-  if(password.length >= 8){
-    return hashPassword(password).then(async (hashedPassword) => {
+  return hashPassword(password).then(async (hashedPassword) => {
     const [result] = await connection
       .promise()
       .query(
-        "INSERT INTO users (firstname, lastname, email, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)",
-        [firstname, lastname, email, city, language, hashedPassword]
+        "INSERT INTO users (firstname, lastname, email, city, language, hashedPassword, token) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [firstname, lastname, email, city, language, hashedPassword, token]
       );
     const id = result.insertId;
-    return { id, firstname, lastname, email, city, language, hashedPassword };
+    return {
+      id,
+      firstname,
+      lastname,
+      email,
+      city,
+      language,
+      hashedPassword,
+      token,
+    };
   });
-  }
-
 };
 
 exports.verifmail = async ({ filters: { email, usersID } }) => {
@@ -96,10 +112,13 @@ exports.verifmail = async ({ filters: { email, usersID } }) => {
   }
 };
 
-exports.update = (id, newAttributes) => {
-  return connection
+exports.update = (id, newAttributes, token) => {
+  return hashPassword(newAttributes.hashedpassword).then(async (hashedPassword) => {
+    Object.defineProperty(newAttributes, 'hashedpassword', {value:hashedPassword}) // transforme password in hashedpassword
+    await connection
     .promise()
-    .query("UPDATE users SET ? WHERE id = ?", [newAttributes, id]);
+    .query("UPDATE users SET ?, token = ? WHERE id = ?", [newAttributes, token, id]);
+  });
 };
 
 exports.destroy = ({ usersID }) => {
