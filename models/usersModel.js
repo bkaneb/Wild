@@ -55,17 +55,18 @@ exports.finOne = ({ filters: { usersID } }) => {
     .query("SELECT * FROM users WHERE id = ?", [usersID]);
 };
 
-exports.findByToken = (token) => {
-  return connection.promise()
-    .query('SELECT * FROM users WHERE token = ?', [token])
-    .then(([results]) => results[0]);
+// si on a un token (cookie) qui correspond un user alors on prend c'est infos
+exports.findByToken = async (token) => {
+  const [results] = await connection.promise()
+    .query('SELECT * FROM users WHERE token = ?', [token]);
+  return results[0];
 };
 
-
-exports.movies = (user_id) => {
-  return connection.promise()
-    .query('SELECT * FROM movies WHERE user_id = ?', [user_id])
-    .then(([results]) => results);
+// afficahge des films lier à user
+exports.movies = async (user_id) => {
+  const [results] = await connection.promise()
+    .query('SELECT * FROM movies WHERE user_id = ?', [user_id]);
+  return results;
 };
 
 exports.create = async (
@@ -112,13 +113,12 @@ exports.verifmail = async ({ filters: { email, usersID } }) => {
   }
 };
 
-exports.update = (id, newAttributes, token) => {
-  return hashPassword(newAttributes.hashedpassword).then(async (hashedPassword) => {
-    Object.defineProperty(newAttributes, 'hashedpassword', {value:hashedPassword}) // transforme password in hashedpassword
-    await connection
+exports.update = async (id, newAttributes, token) => {
+  const hashedPassword = await hashPassword(newAttributes.hashedpassword);
+  Object.defineProperty(newAttributes, 'hashedpassword', { value: hashedPassword }); // transforme password in hashedpassword
+  await connection
     .promise()
     .query("UPDATE users SET ?, token = ? WHERE id = ?", [newAttributes, token, id]);
-  });
 };
 
 exports.destroy = ({ usersID }) => {

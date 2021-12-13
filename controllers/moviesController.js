@@ -2,21 +2,23 @@ const MoviesModels = require("../models/moviesModel");
 const UsersModels = require("../models/usersModel");
 
 exports.selectAll = async (req, res) => {
-  const { user_token } = req.cookies;
+  const { user_token } = req.cookies; // recuperation cookie
   const color = req.query.color;
   const max_duration = req.query.max_duration;
   try {
+    // si pas de cookie on affiche tout
     if (!user_token) {
       const [result] = await MoviesModels.findMany({
         filters: { color, max_duration },
       });
       res.status(200).json(result);
     } else {
+      // sinon on affiche seulement les films que user a crée
       await UsersModels.findByToken(user_token).then(async (user) => {
         await UsersModels.movies(user.id).then((movies) => {
           res.send(movies);
-        })
-      })
+        });
+      });
     }
   } catch (err) {
     console.log(err);
@@ -42,22 +44,36 @@ exports.selectOne = async (req, res) => {
 
 exports.insert = async (req, res) => {
   let error = null;
+  const { user_token } = req.cookies; // recuperation cookie
   try {
-    await UsersModels.findByToken(req.cookies["user_token"]).then(
-      async (user) => {
-        error = MoviesModels.validate(req.body);
-        if (error) return Promise.reject("INVALID_DATA");
-        try {
-          await MoviesModels.create({ ...req.body, user_id: user.id }).then(
-            (createMovies) => {
-              res.status(201).send(createMovies);
-            }
-          );
-        } catch (err) {
-          res.status(500).send("Error create the movie");
-        }
+    error = MoviesModels.validate(req.body);
+    if (error) return Promise.reject("INVALID_DATA");
+    if (!user_token) {
+      try {
+        await MoviesModels.create({ ...req.body, user_id: null }).then(
+          (createMovies) => {
+            res.status(201).send(createMovies);
+          }
+        );
+      } catch (err) {
+        console.log(err)
+        res.status(500).send("Error create the movie");
       }
-    );
+    } else {
+      await UsersModels.findByToken(req.cookies["user_token"]).then(
+        async (user) => {
+          try {
+            await MoviesModels.create({ ...req.body, user_id: user.id }).then(
+              (createMovies) => {
+                res.status(201).send(createMovies);
+              }
+            );
+          } catch (err) {
+            res.status(500).send("Error create the movie");
+          }
+        }
+      );
+    }
   } catch (err) {
     console.log(err);
     if (err === "INVALID_DATA") res.status(422).send(error.details[0].message);

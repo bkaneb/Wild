@@ -39,14 +39,27 @@ exports.findOne = ({ filters: { moviesID } }) => {
 
 
 exports.create = async ({ title, director, year, color, duration, user_id }) => {
-  const [result] = await connection
+  if( user_id != null)
+  {
+    const [result] = await connection
     .promise()
     .query(
       "INSERT INTO movies(title, director, year, color, duration, user_id) VALUES (?,?,?,?,?,?)",
       [title, director, year, color, duration, user_id]
     );
-  const id = result.insertId;
-  return { id, title, director, year, color, duration };
+    const id = result.insertId;
+    return { id, title, director, year, color, duration };
+  } else {
+    const [result] = await connection
+    .promise()
+    .query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?,?,?,?,?)",
+      [title, director, year, color, duration]
+    );
+    const id = result.insertId;
+    return { id, title, director, year, color, duration };
+  }
+
 };
 
 exports.update = (id, newAttributes) => {
