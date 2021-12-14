@@ -39,6 +39,7 @@ exports.findOne = ({ filters: { moviesID } }) => {
 
 
 exports.create = async ({ title, director, year, color, duration, user_id }) => {
+  console.log(user_id);
   if( user_id != null)// si on a un cookie on trie
   {
     const [result] = await connection

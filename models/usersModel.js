@@ -70,17 +70,15 @@ exports.movies = async (user_id) => {
 };
 
 exports.create = async (
-  { firstname, lastname, email, city, language, password },
-  token
-) => {
+  { firstname, lastname, email, city, language, password }) => {
   console.log(token);
   //permettra d'haser le mdp
   return hashPassword(password).then(async (hashedPassword) => {
     const [result] = await connection
       .promise()
       .query(
-        "INSERT INTO users (firstname, lastname, email, city, language, hashedPassword, token) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [firstname, lastname, email, city, language, hashedPassword, token]
+        "INSERT INTO users (firstname, lastname, email, city, language, hashedPassword) VALUES ( ?, ?, ?, ?, ?, ?)",
+        [firstname, lastname, email, city, language, hashedPassword]
       );
     const id = result.insertId;
     return {
@@ -91,7 +89,6 @@ exports.create = async (
       city,
       language,
       hashedPassword,
-      token,
     };
   });
 };
@@ -113,12 +110,13 @@ exports.verifmail = async ({ filters: { email, usersID } }) => {
   }
 };
 
-exports.update = async (id, newAttributes, token) => {
+exports.update = async (id, newAttributes) => {
+console.log(newAttributes) 
   const hashedPassword = await hashPassword(newAttributes.hashedpassword);
   Object.defineProperty(newAttributes, 'hashedpassword', { value: hashedPassword }); // transforme password in hashedpassword
   await connection
     .promise()
-    .query("UPDATE users SET ?, token = ? WHERE id = ?", [newAttributes, token, id]);
+    .query("UPDATE users SET ? WHERE id = ?", [newAttributes, id]);
 };
 
 exports.destroy = ({ usersID }) => {

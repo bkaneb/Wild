@@ -13,8 +13,12 @@ const jwt = require('jsonwebtoken');
 
 const PRIVATE_KEY = "superSecretStringNowoneShouldKnowOrTheCanGenerateTokens"
 
-const calculateToken = (userEmail = "", users = "") => {
-    return jwt.sign({email: userEmail, user : users }, PRIVATE_KEY);
+const calculateToken = (userEmail = "", users_id) => {
+    return jwt.sign({email: userEmail, user_id : users_id }, PRIVATE_KEY);
+}
+
+const decode = (token) => {
+    return jwt.decode(token);
 }
 // test jetons
 
@@ -27,4 +31,4 @@ calculateToken('otherEmail@gmail.com');
 calculateToken('firstEmail@gmail.com')
 // returns 731f04b6e83c8e911e0520a1994afaae (just as the first string)
 
-module.exports = { calculateToken };
+module.exports = { calculateToken, decode };

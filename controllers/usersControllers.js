@@ -69,7 +69,7 @@ exports.update = async (req, res, next) => {
         }
         error = UsersModel.validate();
         if(error) return Promise.reject("INVALID_DATA");
-        return await UsersModel.update(req.params.id, req.body, calculateToken(email));
+        return await UsersModel.update(usersID, req.body);
       })
       .then(() => {
         res.status(200).json({ id: usersID, ...req.body });
