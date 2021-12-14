@@ -43,7 +43,7 @@ exports.selectOne = async (req, res) => {
 };
 
 exports.insert = async (req, res) => {
-  let error = null;
+/*   let error = null;
   const { user_token } = req.cookies; // recuperation cookie
   try {
     error = MoviesModels.validate(req.body);
@@ -75,6 +75,38 @@ exports.insert = async (req, res) => {
       );
     }
   } catch (err) {
+    console.log(err);
+    if (err === "INVALID_DATA") res.status(422).send(error.details[0].message);
+    else res.status(401).send("Unauthorized user");
+  } */
+  let error = null;
+    try {
+    error = MoviesModels.validate(req.body);
+    if (error) return Promise.reject("INVALID_DATA");
+      try {
+        await MoviesModels.create({ ...req.body, user_id: null }).then(
+          (createMovies) => {
+            res.status(201).send(createMovies);
+          }
+        );
+      } catch (err) {
+        console.log(err)
+        res.status(500).send("Error create the movie");
+      }
+      await UsersModels.findByToken(req.cookies["user_token"]).then(
+        async (user) => {
+          try {
+            await MoviesModels.create({ ...req.body, user_id: user.id }).then(
+              (createMovies) => {
+                res.status(201).send(createMovies);
+              }
+            );
+          } catch (err) {
+            res.status(500).send("Error create the movie");
+          }
+        }
+      );
+    } catch (err) {
     console.log(err);
     if (err === "INVALID_DATA") res.status(422).send(error.details[0].message);
     else res.status(401).send("Unauthorized user");

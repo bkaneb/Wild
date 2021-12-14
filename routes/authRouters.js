@@ -16,7 +16,7 @@ authRouter.post('/api/auth/checkCredentials', async (req,res, next) => {
                   ).then((passwordIsCorrect) => {
                       // si true on envoie la clé privé (email -> hexa) dans un cookie
                         if(passwordIsCorrect){
-                            const token = calculateToken(email);//(email -> hexa)
+                            const token = calculateToken(email, user.id);//(email -> hexa)
                             UsersModel.update(user.id, { token: token });// update de la clé privée dans la bd
                             res.cookie('user_token', token);// création cookie
                             res.send();

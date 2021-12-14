@@ -39,7 +39,7 @@ exports.findOne = ({ filters: { moviesID } }) => {
 
 
 exports.create = async ({ title, director, year, color, duration, user_id }) => {
-  if( user_id != null)
+  if( user_id != null)// si on a un cookie on trie
   {
     const [result] = await connection
     .promise()
@@ -49,7 +49,7 @@ exports.create = async ({ title, director, year, color, duration, user_id }) => 
     );
     const id = result.insertId;
     return { id, title, director, year, color, duration };
-  } else {
+  } else { // si y a pas de cookie on select tous les films
     const [result] = await connection
     .promise()
     .query(

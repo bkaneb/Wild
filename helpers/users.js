@@ -1,11 +1,21 @@
 require("dotenv").config();
+/*
+// plus besoin avec jwt
+
 const crypto = require('crypto');
 
 // hashage en hexa de l'email
 const calculateToken = (userEmail = "") => {
     return crypto.createHash('md5').update(userEmail + process.env.PRIVATE_KEY).digest("hex");
-}
+} */
 
+const jwt = require('jsonwebtoken');
+
+const PRIVATE_KEY = "superSecretStringNowoneShouldKnowOrTheCanGenerateTokens"
+
+const calculateToken = (userEmail = "", users = "") => {
+    return jwt.sign({email: userEmail, user : users }, PRIVATE_KEY);
+}
 // test jetons
 
 calculateToken('firstEmail@gmail.com');

@@ -1,12 +1,5 @@
-const User = require("./models/usersModel");
+const jwt = require('jsonwebtoken');
 
-/* User.hashPassword("myPlainPassword").then((hashedPassword) => {
-  console.log(hashedPassword);
-}); */
+const token = jwt.sign({ foo : 'bar'}, 'shhhhh');
 
-User.verifyPassword(
-  "myWrongPlainPassword",
-  "$argon2id$v=19$m=65536,t=5,p=1$yQJjFhHgrlncpv3Q/DIRhw$MyIxYxtWTuJRt9kqvcc99qd7j8CCHXbYhSBEo9O/psw"
-).then((passwordIsCorrect) => {
-  console.log(passwordIsCorrect);
-});
+console.log(token)
