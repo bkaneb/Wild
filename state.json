@@ -1,0 +1,3 @@
+{
+	"payload": "[{\"type\":\"INCREMENT\"},{\"type\":\"INCREMENT\"},{\"type\":\"INCREMENT\"},{\"type\":\"INCREMENT\"},{\"type\":\"INCREMENT\"},{\"type\":\"INCREMENT\"},{\"type\":\"DECREMENT\"},{\"type\":\"DECREMENT\"},{\"type\":\"DECREMENT\"},{\"type\":\"DECREMENT\"},{\"type\":\"incrementByTen\"},{\"type\":\"incrementByTen\"},{\"type\":\"incrementByTen\"},{\"type\":\"decrementByTen\"},{\"type\":\"decrementByTen\"},{\"type\":\"RESET\"},{\"type\":\"INCREMENT\"},{\"type\":\"DECREMENT\"},{\"type\":\"incrementByTen\"},{\"type\":\"decrementByTen\"},{\"type\":\"RESET\"},{\"type\":\"INCREMENT\"},{\"type\":\"DECREMENT\"},{\"type\":\"incrementByTen\"},{\"type\":\"RESET\"}]"
+}
