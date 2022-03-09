@@ -1,0 +1,6 @@
+PUT http://localhost:3000/api/wilder/622740d8e0d6332de8f5130d HTTP/1.1
+content-type: application/json
+
+{
+    "name":"Http Wilder 2 Modified 3x"
+}
