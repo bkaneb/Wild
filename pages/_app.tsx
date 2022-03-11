@@ -1,9 +1,17 @@
-import "../styles/globals.css";
-import type { AppProps } from "next/app";
 import dynamic from "next/dynamic";
+import type { AppProps } from "next/app";
+import "../styles/globals.css";
+import HeaderContainerCards from "../components/Cards/HeaderContainerCards";
+import FooterCards from "../components/Cards/FooterContainerCards";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <HeaderContainerCards />
+      <Component {...pageProps} />
+      <FooterCards />
+    </>
+  );
 }
 
 // Disabling SSR
