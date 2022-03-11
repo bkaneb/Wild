@@ -63,10 +63,16 @@ export const AddWilder = () => {
     console.log(skills);
   };
 
+  const handleDeleteSkills = (index: number) => {
+    skills.splice(index, 1);
+    setSkills([...skills]);
+    console.log(skills);
+  };
+
   return (
     <>
       <Link href="http://localhost:3000/" passHref>
-        return
+        <a className="link">Return</a>
       </Link>{" "}
       <div className={styles.container}>
         <form
@@ -122,6 +128,19 @@ export const AddWilder = () => {
             {skills.map((skill, index) => (
               <div key={index}>
                 Title : {skill.title} Votes : {skill.votes}
+                <button
+                  style={{
+                    borderRadius: "50%",
+                    margin: "0.5em",
+                    cursor: "pointer",
+                  }}
+                  type="button"
+                  onClick={() => {
+                    handleDeleteSkills(index);
+                  }}
+                >
+                  -
+                </button>
               </div>
             ))}
           </div>

@@ -7,8 +7,12 @@ function WildersBook() {
     <header>
       <div className={styles.container}>
         <h1>Wilders Book</h1>
-        <Link href="http://localhost:3000/addWilder" passHref>Add Wilder</Link>
-        <Link href="http://localhost:3000/updateWilder" passHref>Update Wilder</Link>
+        <Link href="http://localhost:3000/addWilder" passHref>
+          <a className="link">Add Wilder</a>
+        </Link>
+        <Link href="http://localhost:3000/updateWilder" passHref>
+          <a className="link">Update Wilder</a>
+        </Link>
       </div>
     </header>
   );

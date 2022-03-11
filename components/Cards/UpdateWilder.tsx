@@ -74,6 +74,8 @@ function UpdateWilder() {
           };
         }),
       });
+      const resultWilder = await axios.get("http://localhost:8000/api/wilder");
+      setWilders(resultWilder.data.result);
       setTitle("");
       setVotes(0);
       setSuccess("Modifié");
@@ -111,10 +113,16 @@ function UpdateWilder() {
     }
   };
 
+  const handleDeleteSkills = (index: number) => {
+    skills.splice(index, 1);
+    setSkills([...skills]);
+    console.log(skills);
+  };
+
   return (
     <>
       <Link href="http://localhost:3000/" passHref>
-        return
+        <a className="link">Return</a>
       </Link>{" "}
       <div className={styles.container}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -173,7 +181,7 @@ function UpdateWilder() {
           {error ? <p className={styles.error}>{error}</p> : null}
           {success ? <p className={styles.success}>{success}</p> : null}
 
-          <input type="submit" />
+          <input type="submit" value="Update" />
         </form>
         {skills.length !== 0 && (
           <div className={styles.containerSkills}>
@@ -181,6 +189,19 @@ function UpdateWilder() {
             {skills.map((skill, index) => (
               <div key={index}>
                 Title : {skill.title} Votes : {skill.votes}
+                <button
+                  style={{
+                    borderRadius: "50%",
+                    margin: "0.5em",
+                    cursor: "pointer",
+                  }}
+                  type="button"
+                  onClick={() => {
+                    handleDeleteSkills(index);
+                  }}
+                >
+                  -
+                </button>
               </div>
             ))}
           </div>
