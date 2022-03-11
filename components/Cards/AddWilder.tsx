@@ -9,12 +9,12 @@ export type Skills = {
 };
 
 export const AddWilder = () => {
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-  const [title, setTitle] = useState("");
-  const [votes, setVotes] = useState(0);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [name, setName] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [votes, setVotes] = useState<number>(0);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
   const [skills, setSkills] = useState<Skills[]>([]);
 
   const fetchAddWilders = async () => {

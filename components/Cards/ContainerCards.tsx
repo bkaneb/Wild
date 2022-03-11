@@ -4,8 +4,8 @@ import Cards from "./Cards";
 import styles from "../../styles/ContainerCards.module.css";
 
 function ContainerCards() {
-  const [currentWilder, setCurrentWilder] = useState([]);
-  const [trigger, setTrigger] = useState(0);
+  const [currentWilder, setCurrentWilder] = useState<[]>([]);
+  const [trigger, setTrigger] = useState<number>(0);
   useEffect(() => {
     const fetchWilders = async () => {
       try {

@@ -44,7 +44,7 @@ function Cards({ name, city, skills, _id, trigger, setTrigger }: CardProps) {
       <h4>Wild Skills</h4>
       <ul className={styles.skills}>
         {skills
-          ? skills.map((skill, index) => {
+          ? skills.map((skill, index: number) => {
               return <Skills {...skill} key={index} />;
             })
           : null}
