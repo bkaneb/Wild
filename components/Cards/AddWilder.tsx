@@ -47,20 +47,28 @@ export const AddWilder = () => {
   };
 
   const handleClickAddSkills = () => {
+    let titleDuplicate: boolean = false;
+    skills.map((skill) => {
+      if (skill.title === title) return (titleDuplicate = true);
+    });
     setSuccess("");
     if (title === "") return setError("Title it's empty");
     if (votes > 10) return setError("the value is too large");
-    setSkills([
-      ...skills,
-      {
-        title: title,
-        votes: votes,
-      },
-    ]);
-    setTitle("");
-    setVotes(0);
-    setError("");
-    console.log(skills);
+    if (!titleDuplicate) {
+      setSkills([
+        ...skills,
+        {
+          title: title,
+          votes: votes,
+        },
+      ]);
+      setTitle("");
+      setVotes(0);
+      setError("");
+      console.log(skills);
+    } else {
+      return setError("Title duplicate");
+    }
   };
 
   const handleDeleteSkills = (index: number) => {

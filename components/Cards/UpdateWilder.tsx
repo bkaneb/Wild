@@ -86,19 +86,27 @@ function UpdateWilder() {
   };
 
   const handleClickAddSkills = () => {
+    let titleDuplicate: boolean = false;
+    skills.map((skill) => {
+      if (skill.title === title) return (titleDuplicate = true);
+    });
     setSuccess("");
     if (title === "") return setError("Title it's empty");
     if (votes > 10) return setError("the votes value is too large");
-    setSkills([
-      ...skills,
-      {
-        title: title,
-        votes: votes,
-      },
-    ]);
-    setTitle("");
-    setVotes(0);
-    setError("");
+    if (!titleDuplicate) {
+      setSkills([
+        ...skills,
+        {
+          title: title,
+          votes: votes,
+        },
+      ]);
+      setTitle("");
+      setVotes(0);
+      setError("");
+    } else {
+      return setError("Title duplicate");
+    }
   };
 
   const selectWilderChange = async (_id: string) => {
