@@ -17,7 +17,8 @@ function Cards({ name, city, skills, _id, trigger, setTrigger }: CardProps) {
       await axios.delete(`http://localhost:8000/api/wilder/${_id}`);
       setTrigger(trigger + 1);
     } catch (error: unknown) {
-      console.log(error);
+      const e = error as ErrorEvent;
+      console.log(e.error);
     }
   };
   return (

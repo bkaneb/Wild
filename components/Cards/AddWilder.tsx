@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import axios from "axios";
 import styles from "../../styles/AddWilder.module.css";
 import Link from "next/link";
@@ -9,12 +9,12 @@ export interface ISkills {
 };
 
 export const AddWilder = () => {
-  const [name, setName] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
-  const [votes, setVotes] = useState<number>(0);
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
+  const [name, setName] = useState("");
+  const [city, setCity] = useState("");
+  const [title, setTitle] = useState("");
+  const [votes, setVotes] = useState(0);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [skills, setSkills] = useState<ISkills[]>([]);
 
   const fetchAddWilders = async () => {
@@ -81,7 +81,7 @@ export const AddWilder = () => {
       </Link>{" "}
       <div className={styles.container}>
         <form
-          onSubmit={(e) => {
+          onSubmit={(e : FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             fetchAddWilders();
           }}
@@ -92,7 +92,7 @@ export const AddWilder = () => {
             type="text"
             placeholder="Type the name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e : ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           />
           <label htmlFor="city-input">City :</label>
           <input
@@ -100,7 +100,7 @@ export const AddWilder = () => {
             type="text"
             placeholder="Type the city"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={(e : ChangeEvent<HTMLInputElement>) => setCity(e.target.value)}
           />
           <div className={styles.containerFormSkills}>
             <label htmlFor="name-input">Title :</label>
@@ -109,7 +109,7 @@ export const AddWilder = () => {
               type="text"
               placeholder="Type the title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e : ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
             />
             <label htmlFor="name-input">Votes :</label>
             <input
@@ -117,7 +117,7 @@ export const AddWilder = () => {
               type="number"
               placeholder="Type the number"
               value={votes}
-              onChange={(e) => setVotes(parseInt(e.target.value))}
+              onChange={(e : ChangeEvent<HTMLInputElement>) => setVotes(parseInt(e.target.value))}
             />
             <button type="button" onClick={handleClickAddSkills}>
               Add the skill

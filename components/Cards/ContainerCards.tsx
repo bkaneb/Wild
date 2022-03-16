@@ -20,7 +20,7 @@ export interface Data {
 
 function ContainerCards() {
   const [currentWilder, setCurrentWilder] = useState<Wilder[]>([]);
-  const [trigger, setTrigger] = useState<number>(0);
+  const [trigger, setTrigger] = useState(0);
   useEffect(() => {
     const fetchWilders = async () => {
       try {
@@ -28,7 +28,8 @@ function ContainerCards() {
         console.log(data);
         setCurrentWilder(data.result);
       } catch (error: unknown) {
-        console.log(error);
+        const e = error as ErrorEvent;
+        console.log(e.error);
       }
     };
 

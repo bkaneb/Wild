@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "../../styles/AddWilder.module.css";
@@ -17,25 +17,22 @@ export interface DataOneWilder {
 }
 
 function UpdateWilder() {
-  const [id, setId] = useState<string>("");
-  const {
-    handleSubmit,
-  } = useForm<Inputs>();
-  const [name, setName] = useState<string>("");
-  const [city, setCity] = useState<string>("");
+  const [id, setId] = useState("");
+  const { handleSubmit } = useForm<Inputs>();
+  const [name, setName] = useState("");
+  const [city, setCity] = useState("");
   const [skills, setSkills] = useState<ISkills[]>([]);
-  const [title, setTitle] = useState<string>("");
-  const [votes, setVotes] = useState<number>(0);
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
+  const [title, setTitle] = useState("");
+  const [votes, setVotes] = useState(0);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [wilders, setWilders] = useState<Wilder[]>([]);
 
   useEffect(() => {
     const fetchWilders = async () => {
       try {
-        const data: Data = (
-          await axios.get("http://localhost:8000/api/wilder")
-        ).data;
+        const data: Data = (await axios.get("http://localhost:8000/api/wilder"))
+          .data;
         setWilders(data.result);
         if (data.result[0]) {
           setId(data.result[0]._id);
@@ -44,7 +41,8 @@ function UpdateWilder() {
           setSkills(data.result[0].skills);
         }
       } catch (error: unknown) {
-        console.log(error);
+        const e = error as ErrorEvent;
+        console.log(e.error);
       }
     };
 
@@ -64,15 +62,15 @@ function UpdateWilder() {
           };
         }),
       });
-      const data: Data = (
-        await axios.get("http://localhost:8000/api/wilder")
-      ).data;
+      const data: Data = (await axios.get("http://localhost:8000/api/wilder"))
+        .data;
       setWilders(data.result);
       setTitle("");
       setVotes(0);
       setSuccess("Modifié");
     } catch (error: unknown) {
-      console.log(error);
+      const e = error as ErrorEvent;
+      console.log(e.error);
       setError("Modification impossible");
     }
   };
@@ -111,7 +109,8 @@ function UpdateWilder() {
       setCity(dataOneWilder.result.city);
       setSkills(dataOneWilder.result.skills);
     } catch (error: unknown) {
-      console.log(error);
+      const e = error as ErrorEvent;
+      console.log(e.error);
     }
   };
 
@@ -131,7 +130,7 @@ function UpdateWilder() {
           <label htmlFor="wilder-select">Wilders:</label>
           <select
             id="wilder-select"
-            onChange={(e) => {
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
               selectWilderChange(e.target.value);
             }}
           >
@@ -148,7 +147,9 @@ function UpdateWilder() {
             type="text"
             placeholder="Type the name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setName(e.target.value)
+            }
           />
           {/* include validation with required or other standard HTML validation rules */}
           <label htmlFor="name-input">City :</label>
@@ -157,7 +158,9 @@ function UpdateWilder() {
             type="text"
             placeholder="Type the city"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setCity(e.target.value)
+            }
           />
           <div className={styles.containerFormSkills}>
             <label htmlFor="title-input">Title :</label>
@@ -166,7 +169,9 @@ function UpdateWilder() {
               type="text"
               placeholder="Type the title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setTitle(e.target.value)
+              }
             />
             <label htmlFor="vote-input">Votes :</label>
             <input
@@ -174,7 +179,9 @@ function UpdateWilder() {
               type="number"
               placeholder="Type the number"
               value={votes}
-              onChange={(e) => setVotes(parseInt(e.target.value))}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setVotes(parseInt(e.target.value))
+              }
             />
             <button type="button" onClick={handleClickAddSkills}>
               Add the skill
