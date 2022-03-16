@@ -33,7 +33,7 @@ function UpdateWilder() {
   useEffect(() => {
     const fetchWilders = async () => {
       try {
-        const data: Data = await (
+        const data: Data = (
           await axios.get("http://localhost:8000/api/wilder")
         ).data;
         setWilders(data.result);
@@ -64,7 +64,7 @@ function UpdateWilder() {
           };
         }),
       });
-      const data: Data = await (
+      const data: Data = (
         await axios.get("http://localhost:8000/api/wilder")
       ).data;
       setWilders(data.result);
@@ -104,7 +104,7 @@ function UpdateWilder() {
   const selectWilderChange = async (_id: string) => {
     setId(_id);
     try {
-      const dataOneWilder: DataOneWilder = await (
+      const dataOneWilder: DataOneWilder = (
         await axios.get(`http://localhost:8000/api/wilder/${_id}`)
       ).data;
       setName(dataOneWilder.result.name);

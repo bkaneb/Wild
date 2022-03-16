@@ -24,7 +24,7 @@ function ContainerCards() {
   useEffect(() => {
     const fetchWilders = async () => {
       try {
-        const data : Data = await (await axios.get("http://localhost:8000/api/wilder")).data;
+        const data : Data = (await axios.get("http://localhost:8000/api/wilder")).data;
         console.log(data);
         setCurrentWilder(data.result);
       } catch (error: unknown) {
@@ -39,11 +39,11 @@ function ContainerCards() {
     <main className={styles.container}>
       <h2>Wilders</h2>
       <section className={styles.cardRow}>
-        {currentWilder.map((wilder, index) => {
+        {currentWilder.map((wilder) => {
           return (
             <Cards
               {...wilder}
-              key={index}
+              key={wilder._id}
               trigger={trigger}
               setTrigger={setTrigger}
             />

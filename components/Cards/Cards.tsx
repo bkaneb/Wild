@@ -8,7 +8,7 @@ import { Wilder } from "./ContainerCards";
 
 export interface CardProps extends Wilder {
   trigger: number;
-  setTrigger: Function;
+  setTrigger: (trigger : number) => void;
 }
 
 function Cards({ name, city, skills, _id, trigger, setTrigger }: CardProps) {
