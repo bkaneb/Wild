@@ -4,17 +4,9 @@ import Image from "next/image";
 import blank_profile from "../../public/blank_profile.png";
 import Skills from "./Skills";
 import styles from "../../styles/Cards.module.css";
+import { Wilder } from "./ContainerCards";
 
-export interface CardProps {
-  readonly name: string;
-  readonly city: string;
-  readonly skills: [
-    {
-      title: string;
-      votes: number;
-    }
-  ];
-  readonly _id: string;
+export interface CardProps extends Wilder {
   trigger: number;
   setTrigger: Function;
 }
@@ -22,11 +14,9 @@ export interface CardProps {
 function Cards({ name, city, skills, _id, trigger, setTrigger }: CardProps) {
   const handleDelete = async () => {
     try {
-      const result = await axios.delete(
-        `http://localhost:8000/api/wilder/${_id}`
-      );
+      await axios.delete(`http://localhost:8000/api/wilder/${_id}`);
       setTrigger(trigger + 1);
-    } catch (error) {
+    } catch (error: unknown) {
       console.log(error);
     }
   };

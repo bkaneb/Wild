@@ -3,39 +3,28 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "../../styles/AddWilder.module.css";
+import { ISkills } from "./AddWilder";
+import { Data, Wilder } from "./ContainerCards";
 
-type Inputs = {
+export interface Inputs {
   name: string;
   city: string;
-};
+}
 
-export type Skills = {
-  title: string;
-  votes: number;
-};
-
-export type Wilder = {
-  readonly name: string;
-  readonly city: string;
-  readonly skills: [
-    {
-      title: string;
-      votes: number;
-    }
-  ];
-  readonly _id: string;
-};
+export interface DataOneWilder {
+  result: Wilder;
+  success: boolean;
+}
 
 function UpdateWilder() {
   const [id, setId] = useState<string>("");
   const {
-    register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
   const [name, setName] = useState<string>("");
   const [city, setCity] = useState<string>("");
-  const [skills, setSkills] = useState<Skills[]>([]);
+  const [skills, setSkills] = useState<ISkills[]>([]);
   const [title, setTitle] = useState<string>("");
   const [votes, setVotes] = useState<number>(0);
   const [error, setError] = useState<string>("");
@@ -45,15 +34,17 @@ function UpdateWilder() {
   useEffect(() => {
     const fetchWilders = async () => {
       try {
-        const result = await axios.get("http://localhost:8000/api/wilder");
-        setWilders(result.data.result);
-        if (result.data.result[0]) {
-          setId(result.data.result[0]._id);
-          setName(result.data.result[0].name);
-          setCity(result.data.result[0].city);
-          setSkills(result.data.result[0].skills);
+        const data: Data = await (
+          await axios.get("http://localhost:8000/api/wilder")
+        ).data;
+        setWilders(data.result);
+        if (data.result[0]) {
+          setId(data.result[0]._id);
+          setName(data.result[0].name);
+          setCity(data.result[0].city);
+          setSkills(data.result[0].skills);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.log(error);
       }
     };
@@ -61,10 +52,10 @@ function UpdateWilder() {
     fetchWilders();
   }, []);
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async () => {
     try {
       setSuccess("");
-      const result = await axios.put(`http://localhost:8000/api/wilder/${id}`, {
+      await axios.put(`http://localhost:8000/api/wilder/${id}`, {
         name: name,
         city: city,
         skills: skills.map((skill) => {
@@ -74,12 +65,14 @@ function UpdateWilder() {
           };
         }),
       });
-      const resultWilder = await axios.get("http://localhost:8000/api/wilder");
-      setWilders(resultWilder.data.result);
+      const data: Data = await (
+        await axios.get("http://localhost:8000/api/wilder")
+      ).data;
+      setWilders(data.result);
       setTitle("");
       setVotes(0);
       setSuccess("Modifié");
-    } catch (error) {
+    } catch (error: unknown) {
       console.log(error);
       setError("Modification impossible");
     }
@@ -112,11 +105,13 @@ function UpdateWilder() {
   const selectWilderChange = async (_id: string) => {
     setId(_id);
     try {
-      const result = await axios.get(`http://localhost:8000/api/wilder/${_id}`);
-      setName(result.data.result.name);
-      setCity(result.data.result.city);
-      setSkills(result.data.result.skills);
-    } catch (error) {
+      const dataOneWilder: DataOneWilder = await (
+        await axios.get(`http://localhost:8000/api/wilder/${_id}`)
+      ).data;
+      setName(dataOneWilder.result.name);
+      setCity(dataOneWilder.result.city);
+      setSkills(dataOneWilder.result.skills);
+    } catch (error: unknown) {
       console.log(error);
     }
   };

@@ -3,7 +3,7 @@ import axios from "axios";
 import styles from "../../styles/AddWilder.module.css";
 import Link from "next/link";
 
-export type Skills = {
+export interface ISkills {
   title: string;
   votes: number;
 };
@@ -15,12 +15,12 @@ export const AddWilder = () => {
   const [votes, setVotes] = useState<number>(0);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
-  const [skills, setSkills] = useState<Skills[]>([]);
+  const [skills, setSkills] = useState<ISkills[]>([]);
 
   const fetchAddWilders = async () => {
     try {
       setSuccess("");
-      const result = await axios.post("http://localhost:8000/api/wilder", {
+      await axios.post("http://localhost:8000/api/wilder", {
         name: name,
         city: city,
         skills: skills.map((skill) => {
@@ -30,18 +30,16 @@ export const AddWilder = () => {
           };
         }),
       });
-      const skillLength = skills.length;
+      const skillLength: number = skills.length;
       for (let i = 1; i < skillLength; i++) {
         skills.pop();
-        console.log(skills);
       }
       setName("");
       setCity("");
       setTitle("");
       setVotes(0);
       setSuccess("Ajouté");
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
       setError("Ajout impossible");
     }
   };
@@ -74,7 +72,6 @@ export const AddWilder = () => {
   const handleDeleteSkills = (index: number) => {
     skills.splice(index, 1);
     setSkills([...skills]);
-    console.log(skills);
   };
 
   return (

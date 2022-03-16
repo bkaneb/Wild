@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "../../styles/Cards.module.css";
+import { ISkills } from './AddWilder';
 
-function Skill({ title, votes }: { title: string; votes: number }) {
+function Skill({ title, votes }: ISkills) {
   return (
     <li>
       {title}
