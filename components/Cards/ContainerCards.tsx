@@ -27,7 +27,7 @@ function ContainerCards() {
         const data : Data = await (await axios.get("http://localhost:8000/api/wilder")).data;
         console.log(data);
         setCurrentWilder(data.result);
-      } catch (error) {
+      } catch (error: unknown) {
         console.log(error);
       }
     };

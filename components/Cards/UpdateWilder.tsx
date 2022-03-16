@@ -20,7 +20,6 @@ function UpdateWilder() {
   const [id, setId] = useState<string>("");
   const {
     handleSubmit,
-    formState: { errors },
   } = useForm<Inputs>();
   const [name, setName] = useState<string>("");
   const [city, setCity] = useState<string>("");
