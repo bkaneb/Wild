@@ -1,0 +1,1 @@
+GET http://localhost:8000/api/wilder HTTP/1.1
