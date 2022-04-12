@@ -1,0 +1,15 @@
+POST http://localhost:8000/api/wilder HTTP/1.1
+content-type: application/json
+
+{
+    "name":"Jimmy Carter",
+    "city": "Los Angeles",
+    "skills":[
+        {"title":"Trop fort", "votes":10},
+        {"title":"mongo", "votes":12},
+        {"title":"js", "votes":5},
+        {"title":"html", "votes":12},
+        {"title":"react", "votes":5},
+        {"title":"next", "votes":12}
+    ]
+}
