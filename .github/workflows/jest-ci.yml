@@ -3,7 +3,7 @@ name: jest-ci
 on:
   push:
     branches-ignore:
-      - "master"
+      - "CI-CD-02"
 
 jobs:
   test-front:
